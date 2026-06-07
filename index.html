@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lighthouse — A Manifesto for Parents</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1e2d40;--navy2:#243548;--navy3:#111820;
+  --cream:#f5f0e8;--warm:#f0ebe0;
+  --orange:#e05c28;--gold:#f0a830;
+  --white:#fff;--body:#2e2a26;--muted:#6b6560;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--navy3);}
+.deck{width:100%;height:100vh;position:relative;}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:5vh 7vw;opacity:0;transform:translateY(16px);transition:opacity 0.45s ease,transform 0.45s ease;pointer-events:none;overflow:hidden;}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:all;}
+.slide.exit{opacity:0;transform:translateY(-16px);transition:opacity 0.3s ease,transform 0.3s ease;}
+.bg-navy{background:var(--navy);}.bg-navy2{background:var(--navy2);}.bg-navy3{background:var(--navy3);}
+.bg-cream{background:var(--cream);}.bg-warm{background:var(--warm);}.bg-orange{background:var(--orange);}
+
+/* BASE FONT SIZES — 30% larger throughout for 34-inch monitor */
+.mono{font-family:'DM Mono',monospace;font-size:13px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;padding:7px 16px;border-radius:2px;margin-bottom:22px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);}
+.pill-dk{border:1px solid rgba(30,45,64,0.25);color:var(--muted);}
+.big{font-family:'Playfair Display',serif;font-weight:900;line-height:0.95;color:var(--white);}
+.big em{font-style:italic;color:var(--orange);}
+h2{font-family:'Playfair Display',serif;font-weight:700;line-height:1.1;color:var(--navy);margin-bottom:18px;font-size:clamp(30px,3.5vw,52px);}
+h2 em{font-style:italic;color:var(--orange);}
+.h2w{color:var(--white);font-size:clamp(30px,3.5vw,52px);font-family:'Playfair Display',serif;font-weight:700;line-height:1.1;margin-bottom:18px;}
+.h2w em{color:var(--orange);}
+/* Body text 30% larger */
+.body{font-size:clamp(17px,1.5vw,22px);font-weight:300;line-height:1.75;color:var(--body);}
+.bodyw{font-size:clamp(17px,1.5vw,22px);font-weight:300;line-height:1.75;color:rgba(245,240,232,0.82);}
+.body p,.bodyw p{margin-bottom:13px;}.body p:last-child,.bodyw p:last-child{margin-bottom:0;}
+strong{font-weight:600;}
+.bar{width:44px;height:3px;background:var(--orange);margin:16px 0;}
+.pull{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(18px,1.9vw,26px);line-height:1.5;border-left:4px solid var(--orange);padding-left:22px;color:var(--navy);}
+.pullw{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(18px,1.9vw,26px);line-height:1.5;border-left:4px solid rgba(255,255,255,0.3);padding-left:22px;color:rgba(245,240,232,0.88);}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:4vw;align-items:start;}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+/* STARS */
+.stars{display:flex;gap:5px;align-items:center;}
+.star{width:14px;height:14px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:rgba(255,255,255,0.1);}
+.star.on{background:var(--gold);filter:drop-shadow(0 0 3px rgba(240,168,48,0.5));}
+
+/* QUESTIONS */
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;}
+.qcell{padding:26px 28px;background:var(--navy2);border:1px solid rgba(255,255,255,0.07);}
+.qcell:nth-child(odd){background:#1a2838;}
+.qnum{display:block;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;border-bottom:1px solid rgba(240,168,48,0.25);padding-bottom:9px;}
+.qbody{font-family:'Playfair Display',serif;font-size:clamp(17px,1.5vw,22px);font-weight:700;color:var(--white);line-height:1.4;}
+.qpersonal{background:var(--orange);padding:26px 28px;margin-top:4px;width:100%;border:2px solid rgba(255,255,255,0.15);}
+.qpersonal .qnum{color:rgba(255,255,255,0.6);border-bottom:1px solid rgba(255,255,255,0.2);}
+.qpersonal .qbody{font-size:clamp(20px,2.2vw,30px);font-weight:900;font-style:italic;}
+
+/* SITUATIONS */
+.sit-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;width:100%;margin-bottom:4px;}
+.sit-cell{padding:22px 24px;background:#1a2838;border:1px solid rgba(255,255,255,0.07);}
+.sit-icon{font-size:22px;margin-bottom:10px;display:block;}
+.sit-head{font-family:'Playfair Display',serif;font-size:clamp(15px,1.3vw,19px);font-weight:700;color:var(--white);margin-bottom:7px;line-height:1.3;}
+.sit-body{font-size:clamp(13px,1.05vw,16px);font-weight:300;color:rgba(245,240,232,0.58);line-height:1.6;}
+
+/* PATH COMPARISON */
+.path-random{background:#e8e2d8;padding:22px 24px;border:2px solid #b8b0a0;}
+.path-connected{background:var(--navy);padding:22px 24px;border:2px solid rgba(240,168,48,0.45);}
+.path-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px;display:block;font-weight:500;}
+.path-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;font-size:clamp(14px,1.15vw,17px);}
+.path-cost{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;}
+.path-sub{font-size:11px;opacity:0.5;margin-left:4px;}
+.outcome-box{margin-top:14px;padding:12px 16px;border-left:4px solid;}
+.outcome-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;display:block;font-weight:500;}
+.outcome-row{font-size:clamp(13px,1.05vw,15px);font-weight:400;line-height:1.6;margin-bottom:4px;}
+
+/* PROFILE */
+.profile-card{background:var(--navy2);padding:20px 22px;border:1px solid rgba(255,255,255,0.08);}
+.profile-name{font-family:'Playfair Display',serif;font-size:clamp(18px,1.6vw,24px);font-weight:700;color:var(--white);margin-bottom:3px;}
+.profile-sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:14px;}
+.interest-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.interest-label{font-size:clamp(12px,1vw,15px);color:rgba(245,240,232,0.65);width:96px;flex-shrink:0;}
+.out-card{background:var(--navy);border-left:3px solid var(--orange);padding:16px 20px;margin-bottom:3px;}
+.out-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:9px;display:block;font-weight:500;}
+.out-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+.out-item:last-child{margin-bottom:0;}
+.out-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);margin-top:6px;flex-shrink:0;}
+.out-text{font-size:clamp(13px,1.05vw,16px);font-weight:300;color:rgba(245,240,232,0.82);line-height:1.6;}
+.out-text strong{color:var(--white);font-weight:600;}
+
+/* NAV */
+.nav{position:fixed;bottom:26px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;z-index:100;}
+.nb{background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.16);color:var(--white);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 24px;cursor:pointer;transition:background 0.2s;border-radius:2px;}
+.nb:hover{background:rgba(255,255,255,0.18);}
+.nb.pri{background:var(--orange);border-color:var(--orange);}
+.nb.pri:hover{background:#c84f24;}
+.nb:disabled{opacity:0.18;cursor:default;pointer-events:none;}
+.dots{display:flex;gap:7px;align-items:center;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.18);transition:background 0.3s,transform 0.3s;cursor:pointer;}
+.dot.on{background:var(--orange);transform:scale(1.5);}
+.ctr{position:fixed;top:20px;right:7vw;z-index:100;font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,0.22);letter-spacing:0.1em;}
+@media(max-width:768px){.two,.three,.qgrid,.sit-grid{grid-template-columns:1fr;}.slide{padding:4vh 5vw;}}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 0 · PERSONAL NOTE -->
+<div class="slide bg-navy active" data-i="0">
+  <div class="pill">Before you read this</div>
+  <div style="max-width:600px;">
+    <p class="bodyw" style="font-size:clamp(19px,1.8vw,26px);line-height:1.82;margin-bottom:16px;">I wrote this for myself first. Not to pitch anything. Just to get something out of my head that has been sitting there for a long time.</p>
+    <p class="bodyw" style="font-size:clamp(19px,1.8vw,26px);line-height:1.82;">I am sharing it with you because you are a dad building something for kids. I think you will feel parts of this the same way I do.</p>
+  </div>
+  <div class="bar"></div>
+  <p class="mono" style="color:rgba(255,255,255,0.28);">— Sai · June 2026</p>
+</div>
+
+<!-- 1 · THE UNIVERSAL QUESTION -->
+<div class="slide bg-navy3" data-i="1">
+  <div style="max-width:900px;">
+    <p class="mono" style="color:rgba(255,255,255,0.28);margin-bottom:26px;">A question most parents ask themselves</p>
+    <h1 class="big" style="font-size:clamp(42px,6.5vw,96px);margin-bottom:26px;">Have you ever thought about sending your child to a private school?</h1>
+    <div class="bar"></div>
+    <p class="bodyw" style="font-size:clamp(17px,1.5vw,22px);margin-top:20px;max-width:560px;">Most of us have. And most of us looked at the fees — $30,000 to $40,000 a year — and moved on. Told ourselves it would be fine. But the question never fully went away.</p>
+  </div>
+</div>
+
+<!-- 2 · MY STORY -->
+<div class="slide bg-cream" data-i="2">
+  <div class="pill pill-dk">Where this started — my story</div>
+  <h2 style="font-size:clamp(30px,4vw,56px);">I moved on.<br>But the guilt <em>didn't.</em></h2>
+  <div class="two">
+    <div class="body">
+      <p>I am a parent in South Auckland. I work hard. My wife works hard. We have a mortgage on a house we cannot sell because the market dropped. The school closest to us is not one anyone mentions when they talk about Auckland's best.</p>
+      <p>My daughter is 12. She comes home and says it matter-of-factly: <strong>"Our school is broke, man. We are broke."</strong> Not angry. Not sad. Just how things are. That lands harder than anything.</p>
+      <p>I am a senior product manager. I build systems for a living. <strong>And even I do not know what to do for my own daughter.</strong></p>
+    </div>
+    <div>
+      <div class="pull">The guilt is not irrational. It is telling me something real. The difference between schools is not just the classroom — it is the map of opportunities that comes with the fees.</div>
+      <div class="bar"></div>
+      <p class="body">Nobody is showing me that map. Or how to build one myself. <strong>That is the gap I am fixing.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- 3 · SITUATIONS GRID -->
+<div class="slide bg-navy" data-i="3">
+  <div class="pill">This is not just my story</div>
+  <div class="h2w" style="margin-bottom:18px;">Every parent has <em>their own version</em> of this fear.</div>
+  <div class="sit-grid">
+    <div class="sit-cell">
+      <span class="sit-icon">🏠</span>
+      <div class="sit-head">Bought in the wrong suburb</div>
+      <div class="sit-body">House value dropped. Cannot sell. Cannot move zones. The closest school does not have a great reputation and there is nothing I can do about it right now.</div>
+    </div>
+    <div class="sit-cell">
+      <span class="sit-icon">✈️</span>
+      <div class="sit-head">Immigrant family</div>
+      <div class="sit-body">I moved countries so my children would have better opportunities. Now I watch other kids get ahead and wonder — did I make the right choices? What am I missing?</div>
+    </div>
+    <div class="sit-cell">
+      <span class="sit-icon">💼</span>
+      <div class="sit-head">Both parents working full time</div>
+      <div class="sit-body">I care deeply. I just have no time to research. No network to ask. My child's development should not depend on my spare hours — which I do not have.</div>
+    </div>
+    <div class="sit-cell">
+      <span class="sit-icon">👩</span>
+      <div class="sit-head">Single parent, one income</div>
+      <div class="sit-body">I am doing this alone. $35,000 a year is not a conversation I can have. But I refuse to believe that means my child gets less. There has to be another way.</div>
+    </div>
+    <div class="sit-cell">
+      <span class="sit-icon">🌏</span>
+      <div class="sit-head">Cultural community pressure</div>
+      <div class="sit-body">Everyone around us sends their kids to private school. We cannot afford it. But I see the gap growing and I do not know how to close it.</div>
+    </div>
+    <div class="sit-cell">
+      <span class="sit-icon">💸</span>
+      <div class="sit-head">Already spending — but on what?</div>
+      <div class="sit-body">Dance, soccer, tutoring, music. I am spending $2,000 a year already. But nobody has told me if any of it is actually building toward something.</div>
+    </div>
+  </div>
+  <div style="margin-top:8px;padding:18px 24px;background:var(--orange);">
+    <p style="font-family:'Playfair Display',serif;font-size:clamp(18px,1.6vw,24px);font-weight:700;color:var(--white);line-height:1.4;">Every one of these parents is asking the same thing: <em style="font-style:italic;font-weight:900;">Is my child missing out because I cannot afford private school?</em></p>
+  </div>
+</div>
+
+<!-- 4 · SPEND VISUAL — fixed, holiday programmes added -->
+<div class="slide bg-navy2" data-i="4">
+  <div class="pill">The spend problem nobody talks about</div>
+  <div class="two" style="align-items:center;gap:5vw;">
+    <div>
+      <div class="h2w" style="margin-bottom:16px;">You are probably <em>already spending.</em><br>The question is whether it is building anything.</div>
+      <div class="bodyw">
+        <p>Most Auckland families spend $2,000–$4,000 a year on activities. Theatre, soccer, music, tutoring. And two weeks every school holiday — four times a year — when busy parents scramble to find something for their child to do.</p>
+        <p>Holiday programmes alone add up to 8 weeks a year. Horse camps, music workshops, coding days, drama intensives. Good programmes. <strong style="color:var(--white);">But chosen randomly, without a framework.</strong></p>
+        <p><strong style="color:var(--white);">Private schools solve this automatically. The research is done. The structure is built. You are paying $35,000 for someone to have already figured this out. You should not have to.</strong></p>
+      </div>
+    </div>
+    <div>
+      <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:44vh;">
+        <text x="210" y="18" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="2">TYPICAL AUCKLAND FAMILY · PER YEAR</text>
+        <rect x="12" y="80" width="62" height="100" fill="rgba(224,92,40,0.42)" rx="2"/>
+        <text x="43" y="72" font-family="DM Mono" font-size="10" fill="rgba(240,168,48,0.9)" text-anchor="middle">$480–800</text>
+        <text x="43" y="200" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.65)" text-anchor="middle">Theatre</text>
+        <text x="43" y="215" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.4)" text-anchor="middle">Drama</text>
+        <rect x="88" y="115" width="62" height="65" fill="rgba(224,92,40,0.32)" rx="2"/>
+        <text x="119" y="107" font-family="DM Mono" font-size="10" fill="rgba(240,168,48,0.9)" text-anchor="middle">$240–480</text>
+        <text x="119" y="200" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.65)" text-anchor="middle">Soccer</text>
+        <text x="119" y="215" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.4)" text-anchor="middle">Sports</text>
+        <rect x="164" y="65" width="62" height="115" fill="rgba(224,92,40,0.45)" rx="2"/>
+        <text x="195" y="57" font-family="DM Mono" font-size="10" fill="rgba(240,168,48,0.9)" text-anchor="middle">$600–800</text>
+        <text x="195" y="200" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.65)" text-anchor="middle">Music</text>
+        <text x="195" y="215" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.4)" text-anchor="middle">Lessons</text>
+        <rect x="240" y="40" width="62" height="140" fill="rgba(224,92,40,0.52)" rx="2"/>
+        <text x="271" y="32" font-family="DM Mono" font-size="10" fill="rgba(240,168,48,0.9)" text-anchor="middle">$800–1,600</text>
+        <text x="271" y="200" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.65)" text-anchor="middle">Maths</text>
+        <text x="271" y="215" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.4)" text-anchor="middle">Tutoring</text>
+        <rect x="316" y="40" width="62" height="140" fill="rgba(240,168,48,0.28)" rx="2" stroke="rgba(240,168,48,0.7)" stroke-width="2"/>
+        <text x="347" y="32" font-family="DM Mono" font-size="10" fill="rgba(240,168,48,0.95)" text-anchor="middle">$800–1,600</text>
+        <text x="347" y="200" font-family="DM Sans" font-size="11" fill="rgba(240,168,48,0.9)" text-anchor="middle" font-weight="600">Holiday</text>
+        <text x="347" y="215" font-family="DM Sans" font-size="11" fill="rgba(240,168,48,0.65)" text-anchor="middle">Programmes</text>
+        <text x="347" y="228" font-family="DM Sans" font-size="10" fill="rgba(240,168,48,0.5)" text-anchor="middle">8 wks / yr</text>
+        <line x1="8" y1="182" x2="390" y2="182" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="8" y="244" width="384" height="36" fill="rgba(255,255,255,0.04)" rx="2"/>
+        <text x="20" y="266" font-family="DM Mono" font-size="11" fill="rgba(255,255,255,0.4)" letter-spacing="1">TOTAL SPENT</text>
+        <text x="384" y="266" font-family="DM Mono" font-size="12" fill="rgba(240,168,48,0.9)" text-anchor="end" font-weight="bold">$2,920–$5,280 / yr</text>
+        <rect x="8" y="288" width="384" height="36" fill="rgba(224,92,40,0.1)" rx="2"/>
+        <text x="20" y="310" font-family="DM Mono" font-size="11" fill="rgba(255,255,255,0.4)" letter-spacing="1">OUTCOME</text>
+        <text x="384" y="310" font-family="DM Sans" font-size="15" fill="rgba(255,255,255,0.35)" text-anchor="end">Unknown 🤷</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- 5 · NEURAL CONNECTION -->
+<div class="slide bg-navy3" data-i="5">
+  <div class="pill">Why random activities do not add up</div>
+  <div class="two" style="align-items:center;gap:5vw;">
+    <div>
+      <div class="h2w" style="margin-bottom:16px;">Random activities <em>don't compound.</em><br>Connected experiences do.</div>
+      <div class="bodyw">
+        <p>A child who writes a story → enters a competition → gets feedback → tries journalism. Those are not four separate activities. Each one strengthens the next. The connection is what builds capability.</p>
+        <p>Most parents are building disconnected. Not because they do not care. Because nobody showed them how the pieces fit together.</p>
+        <p><strong style="color:var(--white);">Connected intentional experiences build pathways.</strong> Private school students get this framework built for them. That is part of what the fees buy. It should not cost $35,000 to get it.</p>
+      </div>
+    </div>
+    <div>
+      <svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:44vh;">
+        <defs>
+          <radialGradient id="ng2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f0a830" stop-opacity="0.95"/><stop offset="100%" stop-color="#f0a830" stop-opacity="0.2"/></radialGradient>
+          <radialGradient id="ng3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e05c28" stop-opacity="0.95"/><stop offset="100%" stop-color="#e05c28" stop-opacity="0.15"/></radialGradient>
+          <radialGradient id="nr" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#c84020" stop-opacity="0.65"/><stop offset="100%" stop-color="#c84020" stop-opacity="0.1"/></radialGradient>
+          <filter id="glow2"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- Labels -->
+        <text x="120" y="16" font-family="DM Mono" font-size="11" fill="rgba(255,255,255,0.28)" text-anchor="middle" letter-spacing="3">RANDOM</text>
+        <text x="390" y="16" font-family="DM Mono" font-size="11" fill="rgba(240,168,48,0.7)" text-anchor="middle" letter-spacing="3">CONNECTED</text>
+        <line x1="255" y1="8" x2="255" y2="280" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+        <!-- RANDOM side — scattered, no direction -->
+        <circle cx="60" cy="58" r="14" fill="url(#nr)" stroke="rgba(200,64,32,0.35)" stroke-width="1.5"/>
+        <text x="60" y="82" font-family="DM Sans" font-size="12" fill="rgba(255,255,255,0.5)" text-anchor="middle">theatre</text>
+
+        <circle cx="175" cy="45" r="12" fill="url(#nr)" stroke="rgba(200,64,32,0.3)" stroke-width="1.5"/>
+        <text x="175" y="68" font-family="DM Sans" font-size="12" fill="rgba(255,255,255,0.5)" text-anchor="middle">coding</text>
+
+        <circle cx="105" cy="130" r="16" fill="url(#nr)" stroke="rgba(200,64,32,0.35)" stroke-width="1.5"/>
+        <text x="105" y="155" font-family="DM Sans" font-size="12" fill="rgba(255,255,255,0.5)" text-anchor="middle">soccer</text>
+
+        <circle cx="42" cy="178" r="11" fill="url(#nr)" stroke="rgba(200,64,32,0.28)" stroke-width="1.5"/>
+        <text x="42" y="200" font-family="DM Sans" font-size="12" fill="rgba(255,255,255,0.45)" text-anchor="middle">swim</text>
+
+        <circle cx="185" cy="155" r="13" fill="url(#nr)" stroke="rgba(200,64,32,0.3)" stroke-width="1.5"/>
+        <text x="185" y="178" font-family="DM Sans" font-size="12" fill="rgba(255,255,255,0.5)" text-anchor="middle">tutor</text>
+
+        <circle cx="80" cy="228" r="12" fill="url(#nr)" stroke="rgba(200,64,32,0.25)" stroke-width="1.5"/>
+        <text x="80" y="250" font-family="DM Sans" font-size="12" fill="rgba(255,255,255,0.45)" text-anchor="middle">music</text>
+
+        <circle cx="178" cy="222" r="11" fill="url(#nr)" stroke="rgba(200,64,32,0.25)" stroke-width="1.5"/>
+        <text x="178" y="244" font-family="DM Sans" font-size="12" fill="rgba(255,255,255,0.45)" text-anchor="middle">holiday</text>
+
+        <!-- Weak dashed connections -->
+        <line x1="60" y1="58" x2="105" y2="130" stroke="rgba(200,64,32,0.15)" stroke-width="1.5" stroke-dasharray="4,5"/>
+        <line x1="175" y1="45" x2="185" y2="155" stroke="rgba(200,64,32,0.12)" stroke-width="1.5" stroke-dasharray="4,5"/>
+        <line x1="105" y1="130" x2="80" y2="228" stroke="rgba(200,64,32,0.12)" stroke-width="1.5" stroke-dasharray="4,5"/>
+
+        <text x="120" y="278" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.2)" text-anchor="middle" letter-spacing="2">NO DIRECTION</text>
+
+        <!-- CONNECTED side — horizontal spread, clear pathway -->
+        <!-- writing — top left of right half -->
+        <circle cx="295" cy="60" r="18" fill="url(#ng2)" filter="url(#glow2)" stroke="rgba(240,168,48,0.6)" stroke-width="2"/>
+        <text x="295" y="88" font-family="DM Sans" font-size="12" fill="rgba(240,168,48,0.95)" text-anchor="middle" font-weight="500">writing</text>
+
+        <!-- competition — top right -->
+        <circle cx="450" cy="80" r="18" fill="url(#ng2)" filter="url(#glow2)" stroke="rgba(240,168,48,0.65)" stroke-width="2"/>
+        <text x="450" y="108" font-family="DM Sans" font-size="12" fill="rgba(240,168,48,0.95)" text-anchor="middle" font-weight="500">competition</text>
+
+        <line x1="313" y1="68" x2="432" y2="78" stroke="rgba(240,168,48,0.5)" stroke-width="2.5"/>
+
+        <!-- feedback — middle left -->
+        <circle cx="300" cy="168" r="17" fill="url(#ng2)" filter="url(#glow2)" stroke="rgba(240,168,48,0.6)" stroke-width="2"/>
+        <text x="300" y="195" font-family="DM Sans" font-size="12" fill="rgba(240,168,48,0.95)" text-anchor="middle" font-weight="500">feedback</text>
+
+        <line x1="295" y1="78" x2="300" y2="151" stroke="rgba(240,168,48,0.45)" stroke-width="2.5"/>
+        <line x1="443" y1="94" x2="314" y2="162" stroke="rgba(240,168,48,0.4)" stroke-width="2"/>
+
+        <!-- journalism — middle right -->
+        <circle cx="448" cy="175" r="16" fill="url(#ng2)" filter="url(#glow2)" stroke="rgba(240,168,48,0.55)" stroke-width="2"/>
+        <text x="448" y="202" font-family="DM Sans" font-size="12" fill="rgba(240,168,48,0.95)" text-anchor="middle" font-weight="500">journalism</text>
+
+        <line x1="316" y1="175" x2="432" y2="175" stroke="rgba(240,168,48,0.35)" stroke-width="2"/>
+
+        <!-- portfolio — bottom centre, HERO -->
+        <line x1="305" y1="183" x2="365" y2="240" stroke="rgba(224,92,40,0.7)" stroke-width="3.5"/>
+        <line x1="440" y1="189" x2="382" y2="240" stroke="rgba(224,92,40,0.55)" stroke-width="3"/>
+
+        <circle cx="373" cy="252" r="28" fill="url(#ng3)" filter="url(#glow2)" stroke="rgba(224,92,40,0.9)" stroke-width="3"/>
+        <text x="373" y="248" font-family="DM Sans" font-size="14" fill="var(--white)" text-anchor="middle" font-weight="700">portfolio</text>
+        <text x="373" y="264" font-family="DM Sans" font-size="11" fill="rgba(255,255,255,0.7)" text-anchor="middle">✦ built</text>
+
+        <text x="390" y="292" font-family="DM Mono" font-size="10" fill="rgba(240,168,48,0.65)" text-anchor="middle" letter-spacing="2">CLEAR PATHWAY</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- 6 · RANDOM vs CRAFTED -->
+<div class="slide bg-warm" data-i="6">
+  <div class="pill pill-dk">Same budget. Completely different outcome.</div>
+  <h2 style="font-size:clamp(26px,3.2vw,44px);margin-bottom:14px;">Random spending vs <em>intentional connected path.</em></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+    <div class="path-random">
+      <span class="path-tag" style="color:#7a7268;">❌ &nbsp; Random — $2,760 / year</span>
+      <div class="path-row" style="color:#4a4440;border-bottom:1px solid rgba(0,0,0,0.1);padding-bottom:8px;margin-bottom:8px;">
+        <span>Theatre / Drama <span class="path-sub">4 terms · quit term 3</span></span>
+        <span class="path-cost" style="color:#4a4440;">$480</span>
+      </div>
+      <div class="path-row" style="color:#4a4440;"><span>Swimming lessons</span><span class="path-cost" style="color:#4a4440;">$580</span></div>
+      <div class="path-row" style="color:#4a4440;"><span>Coding bootcamp</span><span class="path-cost" style="color:#4a4440;">$700</span></div>
+      <div class="path-row" style="color:#4a4440;"><span>Holiday programme <span class="path-sub">2 weeks random</span></span><span class="path-cost" style="color:#4a4440;">$700</span></div>
+      <div class="path-row" style="color:#4a4440;"><span>Maths tutoring</span><span class="path-cost" style="color:#4a4440;">$300</span></div>
+      <div class="outcome-box" style="background:rgba(0,0,0,0.06);border-color:#aaa;">
+        <span class="outcome-tag" style="color:#8a847e;">Outcome</span>
+        <div class="outcome-row" style="color:#8a847e;">🤷 &nbsp;Activities done</div>
+        <div class="outcome-row" style="color:#8a847e;">🤷 &nbsp;Strengths unclear</div>
+        <div class="outcome-row" style="color:#8a847e;">🤷 &nbsp;No portfolio, no direction</div>
+      </div>
+    </div>
+    <div class="path-connected">
+      <span class="path-tag" style="color:rgba(240,168,48,0.85);">✦ &nbsp; Connected — $1,110 / year</span>
+      <div class="path-row" style="color:rgba(245,240,232,0.9);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;margin-bottom:8px;">
+        <span>Soccer <span class="path-sub" style="color:rgba(255,255,255,0.35);">already loves it</span></span>
+        <span class="path-cost" style="color:rgba(255,255,255,0.5);">$480</span>
+      </div>
+      <div class="path-row" style="color:rgba(245,240,232,0.9);"><span>Creative writing workshop</span><span class="path-cost" style="color:rgba(255,255,255,0.5);">$200</span></div>
+      <div class="path-row" style="color:rgba(245,240,232,0.9);"><span>Sargeson Prize entry <span class="path-sub" style="color:rgba(255,255,255,0.35);">free</span></span><span class="path-cost" style="color:rgba(255,255,255,0.5);">$0</span></div>
+      <div class="path-row" style="color:rgba(245,240,232,0.9);"><span>Holiday writing camp <span class="path-sub" style="color:rgba(255,255,255,0.35);">intentional</span></span><span class="path-cost" style="color:rgba(255,255,255,0.5);">$250</span></div>
+      <div class="path-row" style="color:rgba(245,240,232,0.9);"><span>Duke of Edinburgh</span><span class="path-cost" style="color:rgba(255,255,255,0.5);">$180</span></div>
+      <div class="outcome-box" style="background:rgba(240,168,48,0.1);border-color:var(--gold);">
+        <span class="outcome-tag" style="color:var(--gold);">Outcome</span>
+        <div class="outcome-row" style="color:rgba(245,240,232,0.9);">✓ &nbsp;Builds existing strengths</div>
+        <div class="outcome-row" style="color:rgba(245,240,232,0.9);">✓ &nbsp;Writing portfolio started</div>
+        <div class="outcome-row" style="color:rgba(245,240,232,0.9);">✓ &nbsp;Confidence + leadership</div>
+        <div class="outcome-row" style="color:rgba(245,240,232,0.9);">✓ &nbsp;Clear next step visible</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:8px;padding:12px 18px;background:rgba(224,92,40,0.12);border-left:4px solid var(--orange);">
+    <p class="body" style="font-size:clamp(14px,1.15vw,17px);">Private schools charge $35,000 for this framework. <strong>You should not need to pay that to know what comes next for your child.</strong></p>
+  </div>
+</div>
+
+<!-- 7 · CHILD PROFILE -->
+<div class="slide bg-navy2" data-i="7">
+  <div class="pill">What the product actually does</div>
+  <div class="two" style="align-items:center;gap:4vw;">
+    <div>
+      <div class="h2w" style="margin-bottom:16px;">Start with who your child <em>already is.</em></div>
+      <div class="bodyw" style="margin-bottom:16px;">
+        <p>The child answers a few questions in their own voice. What do you love? What feels easy? What would you try if nobody was watching?</p>
+        <p><strong style="color:var(--white);">The profile emerges from the child. The parent gets the roadmap.</strong></p>
+      </div>
+      <div class="profile-card" style="margin-bottom:3px;">
+        <div class="profile-name">Aroha, 12</div>
+        <div class="profile-sub">Year 8 · Public School · South Auckland · Budget $1,000/yr</div>
+        <div class="interest-row"><span class="interest-label">Writing</span><div class="stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div></div></div>
+        <div class="interest-row"><span class="interest-label">Art & Drawing</span><div class="stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div></div></div>
+        <div class="interest-row"><span class="interest-label">Storytelling</span><div class="stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div></div></div>
+        <div class="interest-row"><span class="interest-label">Soccer</span><div class="stars"><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star on"></div><div class="star"></div></div></div>
+        <div class="interest-row"><span class="interest-label">Leadership</span><div class="stars"><div class="star on"></div><div class="star on"></div><div class="star"></div><div class="star"></div><div class="star"></div></div></div>
+      </div>
+    </div>
+    <div>
+      <svg viewBox="0 0 280 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:32vh;">
+        <defs><filter id="rglow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <polygon points="140,52 192,87 192,157 140,192 88,157 88,87" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <polygon points="140,75 181,103 181,151 140,175 99,151 99,103" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <polygon points="140,98 170,115 170,139 140,156 110,139 110,115" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="140" y1="122" x2="140" y2="44" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="140" y1="122" x2="200" y2="82" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="140" y1="122" x2="200" y2="162" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="140" y1="122" x2="140" y2="200" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="140" y1="122" x2="80" y2="162" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="140" y1="122" x2="80" y2="82" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <polygon points="140,52 192,87 186,149 140,184 99,149 88,87" fill="rgba(240,168,48,0.15)" stroke="rgba(240,168,48,0.7)" stroke-width="2" filter="url(#rglow)"/>
+        <text x="140" y="39" font-family="DM Sans" font-size="10" fill="rgba(240,168,48,0.95)" text-anchor="middle" font-weight="600">Writing ★★★★★</text>
+        <text x="212" y="81" font-family="DM Sans" font-size="10" fill="rgba(240,168,48,0.95)" font-weight="600">Art ★★★★★</text>
+        <text x="210" y="161" font-family="DM Sans" font-size="10" fill="rgba(245,240,232,0.6)">Soccer ★★★★</text>
+        <text x="140" y="214" font-family="DM Sans" font-size="10" fill="rgba(245,240,232,0.5)" text-anchor="middle">Leadership ★★</text>
+        <text x="68" y="161" font-family="DM Sans" font-size="10" fill="rgba(245,240,232,0.55)" text-anchor="end">Confidence ★★★</text>
+        <text x="68" y="81" font-family="DM Sans" font-size="10" fill="rgba(240,168,48,0.95)" text-anchor="end" font-weight="600">Storytelling ★★★★★</text>
+        <circle cx="140" cy="122" r="3" fill="rgba(255,255,255,0.2)"/>
+        <circle cx="140" cy="52" r="4" fill="var(--gold)" filter="url(#rglow)"/>
+        <circle cx="192" cy="87" r="4" fill="var(--gold)" filter="url(#rglow)"/>
+        <circle cx="186" cy="149" r="3.5" fill="rgba(245,240,232,0.5)"/>
+        <circle cx="140" cy="184" r="3" fill="rgba(245,240,232,0.4)"/>
+        <circle cx="99" cy="149" r="3.5" fill="rgba(245,240,232,0.45)"/>
+        <circle cx="88" cy="87" r="4" fill="var(--gold)" filter="url(#rglow)"/>
+        <text x="140" y="236" font-family="DM Mono" font-size="8" fill="rgba(240,168,48,0.5)" text-anchor="middle" letter-spacing="1">CREATIVE · NARRATIVE · VISUAL</text>
+      </svg>
+      <div class="out-card" style="margin-top:3px;">
+        <span class="out-tag">Recommended this term — $330 total</span>
+        <div class="out-item"><div class="out-dot"></div><div class="out-text"><strong>Sargeson Prize</strong> — free entry, national writing competition, directly in her strength zone</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="out-text"><strong>Duke of Edinburgh</strong> — open to all, $180, builds leadership alongside creative path</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="out-text"><strong>July holiday writing camp</strong> — $150, connects directly to next term's competition pathway</div></div>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(224,92,40,0.15);border-left:2px solid var(--orange);">
+          <p style="font-size:clamp(12px,0.95vw,14px);font-weight:300;color:rgba(245,240,232,0.7);line-height:1.6;">These opportunities exist for every child. A private school would have found them automatically. Now you can too.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8 · WHAT WE DO — replaces lighthouse -->
+<div class="slide bg-navy3" data-i="8">
+  <div style="max-width:900px;">
+    <div class="pill">What we actually do</div>
+    <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(224,92,40,0.7);margin-bottom:16px;">The core problem</div>
+    <div class="h2w" style="font-size:clamp(28px,3.8vw,56px);margin-bottom:16px;line-height:1.05;">
+      Most parents are<br>already doing enough.<br><em>They just don't have the map.</em>
+    </div>
+    <div style="padding:16px 22px;background:rgba(224,92,40,0.15);border-left:4px solid var(--orange);margin-bottom:24px;max-width:700px;">
+      <p style="font-family:'Playfair Display',serif;font-size:clamp(17px,1.7vw,24px);font-style:italic;font-weight:700;color:var(--white);line-height:1.4;margin:0;">The problem isn't a lack of opportunities. The problem is that opportunities are disconnected.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4vw;">
+      <div class="bodyw">
+        <p>Soccer. Music. Tutoring. Theatre. Holiday programmes.</p>
+        <p>The effort is real. The love is real. The investment is real.</p>
+        <p><strong style="color:var(--white);">What is missing is not more activity. It is knowing which activities connect — and why.</strong></p>
+        <p>Private school parents do not have to figure this out. A system already figured it out for them. That is part of what $35,000 buys.</p>
+      </div>
+      <div class="bodyw">
+        <p>We help parents who cannot afford that system get the same clarity.</p>
+        <p>Not by adding more to your plate. By making sense of what you are already doing — and showing you the next right step.</p>
+        <div style="margin-top:20px;padding:20px 22px;background:rgba(255,255,255,0.06);border-left:4px solid var(--orange);">
+          <p style="font-family:'Playfair Display',serif;font-size:clamp(17px,1.7vw,24px);font-style:italic;font-weight:400;color:var(--white);line-height:1.5;margin:0;">Because no child should get less just because their parents couldn't afford the school that already figured this out.</p>
+        </div>
+        <div style="margin-top:16px;padding:24px 28px;background:var(--orange);">
+          <p style="font-family:'Playfair Display',serif;font-size:clamp(22px,2.8vw,40px);font-weight:900;color:var(--white);line-height:1.2;margin:0;">Your child deserves the same chances.<br>Now you can give them.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 9 · THREE THINGS + YEAR JOURNEY -->
+<div class="slide bg-cream" data-i="9">
+  <div class="pill pill-dk">How we close the gap — practically</div>
+  <div style="margin-bottom:20px;">
+    <p style="font-family:'Playfair Display',serif;font-size:clamp(22px,2.8vw,38px);font-weight:700;color:var(--navy);line-height:1.2;"><em>Stop managing activities.</em> Start building a pathway.</p>
+  </div>
+  <div class="three" style="gap:14px;margin-bottom:14px;">
+    <div style="background:var(--warm);padding:22px 20px;border-top:4px solid var(--orange);">
+      <div style="font-size:26px;margin-bottom:12px;">🗺️</div>
+      <div style="font-family:'Playfair Display',serif;font-size:clamp(17px,1.6vw,22px);font-weight:700;color:var(--navy);margin-bottom:10px;">Show the gap clearly</div>
+      <p class="body" style="font-size:clamp(14px,1.1vw,17px);">Exactly what opportunities children like yours commonly access — named, real, visible. The map that private school fees have been buying. Now visible to you.</p>
+    </div>
+    <div style="background:var(--warm);padding:22px 20px;border-top:4px solid var(--orange);">
+      <div style="font-size:26px;margin-bottom:12px;">🧭</div>
+      <div style="font-family:'Playfair Display',serif;font-size:clamp(17px,1.6vw,22px);font-weight:700;color:var(--navy);margin-bottom:10px;">Show the connected path</div>
+      <p class="body" style="font-size:clamp(14px,1.1vw,17px);">Not random activities. A connected sequence built around who your child already is. Each step strengthens the next. The same intentionality private schools build in — without the fees.</p>
+    </div>
+    <div style="background:var(--warm);padding:22px 20px;border-top:4px solid var(--orange);">
+      <div style="font-size:26px;margin-bottom:12px;">⏱️</div>
+      <div style="font-family:'Playfair Display',serif;font-size:clamp(17px,1.6vw,22px);font-weight:700;color:var(--navy);margin-bottom:10px;">Give you your time back</div>
+      <p class="body" style="font-size:clamp(14px,1.1vw,17px);">Private schools do this research institutionally. Coordinators, calendars, structures — all built in. We do the same work. So you spend time with your child instead of researching for them.</p>
+    </div>
+  </div>
+  <div style="background:var(--navy);padding:16px 20px;border-radius:2px;">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;">The pathway evolves every year — that is how it stays relevant</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">
+      <div style="text-align:center;padding:12px 6px;background:rgba(240,168,48,0.18);border-top:3px solid var(--gold);">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--gold);margin-bottom:5px;">Year 7</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(12px,1.1vw,16px);font-weight:700;color:rgba(245,240,232,0.95);font-style:italic;margin-bottom:5px;">Explore</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.4;">Try things. Find what feels natural.</div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;background:rgba(240,168,48,0.18);border-top:3px solid var(--gold);">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--gold);margin-bottom:5px;">Year 8</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(12px,1.1vw,16px);font-weight:700;color:rgba(245,240,232,0.95);font-style:italic;margin-bottom:5px;">Connect</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.4;">Link activities. Build first pathways.</div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;background:rgba(224,92,40,0.2);border-top:3px solid var(--orange);">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--orange);margin-bottom:5px;">Year 9</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(12px,1.1vw,16px);font-weight:700;color:rgba(245,240,232,0.95);font-style:italic;margin-bottom:5px;">Identity</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.4;">Who am I? What do I stand for?</div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;background:rgba(224,92,40,0.2);border-top:3px solid var(--orange);">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--orange);margin-bottom:5px;">Year 10</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(12px,1.1vw,16px);font-weight:700;color:rgba(245,240,232,0.95);font-style:italic;margin-bottom:5px;">Build</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.4;">Deepen strengths. First portfolio.</div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;background:rgba(200,70,25,0.22);border-top:3px solid #c8501e;">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:#c8501e;margin-bottom:5px;">Year 11</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(12px,1.1vw,16px);font-weight:700;color:rgba(245,240,232,0.95);font-style:italic;margin-bottom:5px;">Extend</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.4;">Competitions. Leadership. Recognition.</div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;background:rgba(180,55,18,0.22);border-top:3px solid #b03a12;">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:#b03a12;margin-bottom:5px;">Year 12</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(12px,1.1vw,16px);font-weight:700;color:rgba(245,240,232,0.95);font-style:italic;margin-bottom:5px;">Specialise</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.4;">Focus. Mentorship. Scholarship.</div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;background:rgba(160,40,10,0.25);border-top:3px solid #a02808;">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:#a02808;margin-bottom:5px;">Year 13</div>
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(12px,1.1vw,16px);font-weight:700;color:rgba(245,240,232,0.95);font-style:italic;margin-bottom:5px;">Launch</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.4;">Portfolio ready. Next chapter clear.</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.38);font-family:'DM Mono',monospace;letter-spacing:0.1em;">The answer changes every term. That is why you come back.</div>
+  </div>
+</div>
+
+<!-- FIX 6: 10 · BELIEF — mission + belief + promise all visible -->
+<div class="slide bg-orange" data-i="10">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:5vw;align-items:center;height:100%;">
+    <div>
+      <div class="pill" style="border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.55);margin-bottom:20px;">What we believe</div>
+      <h1 class="big" style="font-size:clamp(40px,6vw,84px);line-height:0.95;margin-bottom:24px;">
+        Opportunity<br>should not be<br><em style="color:rgba(255,255,255,0.9);font-style:italic;text-decoration:underline;text-decoration-color:rgba(255,255,255,0.3);">locked behind wealth.</em>
+      </h1>
+      <p style="font-size:clamp(16px,1.4vw,20px);font-weight:300;color:rgba(255,255,255,0.82);line-height:1.75;">Not in 2026. Not when the opportunities exist. Not when the path can be built for a fraction of the cost.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div style="padding:24px 26px;background:rgba(0,0,0,0.15);border-left:4px solid rgba(255,255,255,0.4);">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;">Our mission</div>
+        <p style="font-family:'Playfair Display',serif;font-size:clamp(17px,1.6vw,22px);font-weight:700;color:var(--white);line-height:1.4;">Why should money decide how far your child goes?</p>
+      </div>
+      <div style="padding:24px 26px;background:rgba(0,0,0,0.15);border-left:4px solid rgba(255,255,255,0.4);">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;">Our promise</div>
+        <p style="font-family:'Playfair Display',serif;font-size:clamp(17px,1.6vw,22px);font-weight:700;color:var(--white);line-height:1.4;">We show you the path. You do not need $35,000 to find it.</p>
+      </div>
+      <div style="padding:16px 26px;background:rgba(255,255,255,0.12);">
+        <p style="font-size:clamp(14px,1.2vw,17px);font-weight:300;color:rgba(255,255,255,0.75);line-height:1.65;">Public schools educate. We help parents extend. <strong style="color:var(--white);">Your hard work will not go wasted.</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 11 · CLOSING — simple human -->
+<div class="slide bg-navy" data-i="11">
+  <div class="pill">After you have read this</div>
+  <div style="max-width:700px;">
+    <p style="font-family:'Playfair Display',serif;font-size:clamp(22px,2.8vw,38px);font-style:italic;font-weight:400;color:var(--white);line-height:1.5;margin-bottom:32px;">"You are building something for kids too. I am curious what you see in this — as a dad, as a builder, as someone who thinks about this stuff."</p>
+    <div style="background:rgba(255,255,255,0.06);border-left:4px solid var(--orange);padding:20px 24px;margin-bottom:24px;">
+      <p style="font-size:clamp(16px,1.4vw,20px);font-weight:300;color:rgba(245,240,232,0.75);line-height:1.7;">I am not building yet. I am talking to parents first.<br>If you know any — <strong style="color:var(--white);">I would love an introduction.</strong></p>
+    </div>
+    <p class="mono" style="color:rgba(255,255,255,0.25);">— Sai · June 2026</p>
+  </div>
+</div>
+
+<!-- 12 · NORTH STAR -->
+<div class="slide bg-navy3" data-i="12">
+  <h1 class="big" style="font-size:clamp(44px,8vw,116px);max-width:100%;">
+    Opportunity<br>should not be<br><em>locked behind wealth.</em>
+  </h1>
+  <div class="bar" style="margin-top:24px;"></div>
+  <p class="mono" style="color:rgba(255,255,255,0.2);margin-top:14px;">This is what we are here to fix. Nothing else.</p>
+</div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav" id="nav">
+  <button class="nb" id="pb" onclick="go(-1)" disabled>← Back</button>
+  <div class="dots" id="dots"></div>
+  <button class="nb pri" id="nb2" onclick="go(1)">Next →</button>
+</div>
+<div class="ctr" id="ctr">1 / 13</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const dotsEl=document.getElementById('dots');
+const total=slides.length;
+let cur=0;
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' on':'');
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+});
+function goTo(n){
+  if(n<0||n>=total)return;
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const p=cur;setTimeout(()=>slides[p].classList.remove('exit'),320);
+  cur=n;slides[cur].classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  document.getElementById('pb').disabled=cur===0;
+  document.getElementById('nb2').disabled=cur===total-1;
+  document.getElementById('nb2').textContent=cur===total-1?'Done':'Next →';
+  document.getElementById('ctr').textContent=(cur+1)+' / '+total;
+  const light=slides[cur].classList.contains('bg-cream')||slides[cur].classList.contains('bg-warm');
+  const orange=slides[cur].classList.contains('bg-orange');
+  document.querySelectorAll('.nb:not(.pri)').forEach(b=>{
+    b.style.color=light?'rgba(30,45,64,0.65)':orange?'rgba(255,255,255,0.8)':'';
+    b.style.background=light?'rgba(30,45,64,0.07)':orange?'rgba(255,255,255,0.15)':'';
+    b.style.borderColor=light?'rgba(30,45,64,0.16)':orange?'rgba(255,255,255,0.3)':'';
+  });
+  document.getElementById('ctr').style.color=light?'rgba(30,45,64,0.28)':orange?'rgba(255,255,255,0.4)':'';
+  document.querySelectorAll('.dot').forEach(d=>{
+    const on=d.classList.contains('on');
+    if(orange)d.style.background=on?'rgba(255,255,255,0.9)':'rgba(255,255,255,0.3)';
+    else d.style.background=on?'var(--orange)':(light?'rgba(30,45,64,0.2)':'rgba(255,255,255,0.18)');
+  });
+}
+function go(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(1);
+  if(e.key==='ArrowLeft')go(-1);
+});
+</script>
+</body>
+</html>
